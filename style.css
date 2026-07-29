@@ -989,22 +989,13 @@ h3 {
 }
 
 .fit-key-generalization {
-  color: #b44508;
-  background: #ffe5d2;
+  color: #15803d;
+  background: #dcfce7;
 }
 
-.fit-key-family {
-  color: #087a4f;
-  background: #d9f5e8;
-}
-
-.fit-key-daily {
-  color: #9a5b00;
-  background: #fff0bd;
-}
-
-.fit-key-blue {
-  color: #167a8b;
+.fit-key-real-scene {
+  color: #0e7490;
+  background: #cffafe;
 }
 
 .fit-list li::before {
