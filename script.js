@@ -138,6 +138,86 @@ function autoScrollCarousel(selector) {
 }
 
 autoScrollCarousel(".experience-photos");
-autoScrollCarousel(".course-service-photos");
+const courseMomentsGallery = document.querySelector(".course-moments-gallery");
 
+if (courseMomentsGallery) {
+  const courseCards = [...courseMomentsGallery.querySelectorAll(".service-photo-card")];
+  const caseOverlay = courseMomentsGallery.querySelector(".course-case-overlay");
+  const casePanel = courseMomentsGallery.querySelector(".course-case-panel");
+  const casePreview = courseMomentsGallery.querySelector(".course-case-preview");
+  const previewImage = casePreview.querySelector("img");
+  const closeButton = courseMomentsGallery.querySelector(".course-case-close");
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  let closeTimer;
 
+  const closeCourseCase = () => {
+    window.clearTimeout(closeTimer);
+    courseCards.forEach((card) => {
+      card.classList.remove("is-active");
+      card.setAttribute("aria-expanded", "false");
+    });
+    caseOverlay.hidden = true;
+    previewImage.removeAttribute("src");
+    previewImage.alt = "";
+  };
+
+  const openCourseCase = (card) => {
+    const template = document.getElementById(`course-case-${card.dataset.case}`);
+    if (!template) return;
+
+    const wasActive = card.classList.contains("is-active");
+    closeCourseCase();
+    if (wasActive) return;
+
+    const content = template.content;
+    const tagContainer = casePanel.querySelector(".course-case-tags");
+    tagContainer.replaceChildren(...[...content.querySelectorAll(".course-case-tag")].map((tag) => tag.cloneNode(true)));
+    casePanel.querySelector("h4").textContent = content.querySelector("h4").textContent;
+    casePanel.querySelector("p").textContent = content.querySelector("p").textContent;
+    const photosRect = courseMomentsGallery.querySelector(".course-service-photos").getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const arrowPosition = ((cardRect.left + cardRect.width / 2 - photosRect.left) / photosRect.width) * 100;
+    casePanel.style.setProperty("--case-arrow", `${Math.min(92, Math.max(8, arrowPosition))}%`);
+    const selectedImage = card.querySelector("img");
+    previewImage.src = selectedImage.currentSrc || selectedImage.src;
+    previewImage.alt = selectedImage.alt;
+    card.classList.add("is-active");
+    card.setAttribute("aria-expanded", "true");
+    caseOverlay.hidden = false;
+  };
+
+  courseCards.forEach((card) => {
+    card.addEventListener("click", () => openCourseCase(card));
+
+    card.addEventListener("pointermove", (event) => {
+      if (!finePointer.matches) return;
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      card.style.setProperty("--tilt-x", `${(-y * 7).toFixed(2)}deg`);
+      card.style.setProperty("--tilt-y", `${(x * 9).toFixed(2)}deg`);
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--tilt-x", "0deg");
+      card.style.setProperty("--tilt-y", "0deg");
+    });
+  });
+
+  closeButton.addEventListener("click", closeCourseCase);
+
+  courseMomentsGallery.addEventListener("mouseenter", () => window.clearTimeout(closeTimer));
+  courseMomentsGallery.addEventListener("mouseleave", () => {
+    if (finePointer.matches && !caseOverlay.hidden) {
+      closeTimer = window.setTimeout(closeCourseCase, 450);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!courseMomentsGallery.contains(event.target)) closeCourseCase();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !caseOverlay.hidden) closeCourseCase();
+  });
+}
