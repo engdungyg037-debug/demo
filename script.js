@@ -221,3 +221,31 @@ if (courseMomentsGallery) {
     if (event.key === "Escape" && !caseOverlay.hidden) closeCourseCase();
   });
 }
+
+const overviewImages = [...document.querySelectorAll(".materials-gallery .material-card img, .ai-screenshot-gallery .ai-shot img")];
+
+if (overviewImages.length) {
+  const lightbox = document.createElement("div");
+  lightbox.className = "image-lightbox";
+  lightbox.setAttribute("role", "dialog");
+  lightbox.setAttribute("aria-modal", "true");
+  lightbox.setAttribute("aria-label", "图片大图预览");
+  lightbox.innerHTML = `<button class="image-lightbox-close" type="button" aria-label="关闭大图预览">&times;</button><img src="" alt="" />`;
+  document.body.append(lightbox);
+  const lightboxImage = lightbox.querySelector("img");
+  const lightboxClose = lightbox.querySelector(".image-lightbox-close");
+  let previouslyFocused;
+  const closeLightbox = () => { lightbox.classList.remove("is-open"); document.body.style.overflow = ""; lightboxImage.removeAttribute("src"); lightboxImage.alt = ""; previouslyFocused?.focus(); };
+  const openLightbox = (image) => { previouslyFocused = document.activeElement; lightboxImage.src = image.currentSrc || image.src; lightboxImage.alt = image.alt; lightbox.classList.add("is-open"); document.body.style.overflow = "hidden"; lightboxClose.focus(); };
+  overviewImages.forEach((image) => {
+    const imageContainer = image.closest("figure");
+    imageContainer.tabIndex = 0;
+    imageContainer.setAttribute("role", "button");
+    imageContainer.setAttribute("aria-label", `查看大图：${image.alt}`);
+    imageContainer.addEventListener("click", () => openLightbox(image));
+    imageContainer.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openLightbox(image); } });
+  });
+  lightboxClose.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox(); });
+}

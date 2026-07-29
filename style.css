@@ -1960,5 +1960,28 @@ h3 {
   .ai-shot img { height: auto; max-height: 360px; }
 }
 @media (max-width: 420px) {
-  .ai-screenshot-gallery { grid-template-columns: 1fr; gap: 16px; }
+  .ai-screenshot-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 }
+
+/* Mobile image overview: show every image at once, then enlarge on tap */
+@media (max-width: 560px) {
+  .site-header { gap: 8px; padding: 10px 14px 8px; }
+  .brand { gap: 8px; font-size: 15px; }
+  .brand-mark { width: 32px; height: 32px; border-radius: 8px; }
+  .nav { gap: 2px; padding-bottom: 0; }
+  .nav a { padding: 6px 9px; font-size: 13px; }
+  .materials-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 20px 14px; }
+  .materials-gallery .materials-copy { grid-column: 1 / -1; }
+  .materials-gallery .long-card,
+  .materials-gallery .weekly-card { align-self: start; justify-self: stretch; }
+  .materials-gallery .material-card img { display: block; width: 100%; height: auto; max-height: 46vh; object-fit: contain; }
+  .ai-screenshot-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
+  .ai-shot img { width: 100%; height: min(34vh, 280px); max-height: none; object-fit: contain; object-position: center; }
+  .materials-gallery .material-card,
+  .ai-shot { cursor: zoom-in; }
+}
+
+.image-lightbox { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 18px; background: rgba(20, 27, 40, 0.92); opacity: 0; visibility: hidden; transition: opacity 180ms ease, visibility 180ms ease; }
+.image-lightbox.is-open { opacity: 1; visibility: visible; }
+.image-lightbox img { display: block; width: auto; max-width: 100%; height: auto; max-height: calc(100dvh - 36px); object-fit: contain; border-radius: 10px; box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35); }
+.image-lightbox-close { position: absolute; top: max(14px, env(safe-area-inset-top)); right: 14px; display: grid; width: 44px; height: 44px; place-items: center; padding: 0; color: #fff; font-size: 30px; line-height: 1; background: rgba(0, 0, 0, 0.52); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; }
