@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --ink: #243047;
   --muted: #617088;
   --cream: #fff8dc;
@@ -1985,3 +1985,15 @@ h3 {
 .image-lightbox.is-open { opacity: 1; visibility: visible; }
 .image-lightbox img { display: block; width: auto; max-width: 100%; height: auto; max-height: calc(100dvh - 36px); object-fit: contain; border-radius: 10px; box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35); }
 .image-lightbox-close { position: absolute; top: max(14px, env(safe-area-inset-top)); right: 14px; display: grid; width: 44px; height: 44px; place-items: center; padding: 0; color: #fff; font-size: 30px; line-height: 1; background: rgba(0, 0, 0, 0.52); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; }
+
+
+/* ── Emoji burst particles ── */
+.emoji-particle {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  transform-origin: center;
+  will-change: transform, opacity;
+}

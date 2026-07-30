@@ -249,3 +249,57 @@ if (overviewImages.length) {
   lightbox.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
   document.addEventListener("keydown", (event) => { if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox(); });
 }
+
+
+/* ── Emoji burst on click ── */
+(function () {
+  const EMOJIS = ["✨", "🌟", "⭐", "💫", "🌈", "🎉", "🎊", "💖", "💝", "🌸", "🌺", "🌻", "🍀", "🦋", "🧸", "🎨", "💐", "🎈", "🎀", "🪷"];
+  const MAX = 130;
+  const PER_CLICK = 14;
+  const particles = [];
+  let rafId = null;
+
+  function burst(cx, cy) {
+    while (particles.length + PER_CLICK > MAX) {
+      particles.shift().el.remove();
+    }
+    for (let i = 0; i < PER_CLICK; i++) {
+      const el = document.createElement("span");
+      el.className = "emoji-particle";
+      el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+      const base = (Math.PI * 2 * i) / PER_CLICK;
+      const angle = base + (Math.random() - 0.5) * 0.55;
+      const dist = 75 + Math.random() * 170;
+      const size = 18 + Math.random() * 28;
+      el.style.cssText = "left:" + cx + "px;top:" + cy + "px;font-size:" + size + "px";
+      document.body.appendChild(el);
+      particles.push({
+        el: el,
+        ox: cx,
+        oy: cy,
+        dx: Math.cos(angle) * dist,
+        dy: Math.sin(angle) * dist - 35,
+        rot: (Math.random() - 0.5) * 400,
+        rotV: (Math.random() - 0.5) * 580,
+        dur: 550 + Math.random() * 750,
+        t0: performance.now()
+      });
+    }
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  }
+
+  function tick(now) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      const t = Math.min((now - p.t0) / p.dur, 1);
+      if (t >= 1) { p.el.remove(); particles.splice(i, 1); continue; }
+      const e = 1 - Math.pow(1 - t, 3);
+      const gy = 45 * t * t;
+      p.el.style.transform = "translate(" + (p.dx * e).toFixed(1) + "px," + (p.dy * e + gy).toFixed(1) + "px) rotate(" + (p.rot + p.rotV * t).toFixed(1) + "deg)";
+      p.el.style.opacity = (1 - t).toFixed(3);
+    }
+    if (particles.length) rafId = requestAnimationFrame(tick); else rafId = null;
+  }
+
+  document.addEventListener("click", function (e) { burst(e.clientX, e.clientY); });
+})();
