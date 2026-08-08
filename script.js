@@ -7,8 +7,12 @@ const toast = document.querySelector(".copy-toast");
 /* Pony scroll progress */
 (function initPonyScrollProgress() {
   let ticking = false;
+  const header = document.querySelector(".site-header");
 
   const updateProgress = () => {
+    if (header) {
+      document.documentElement.style.setProperty("--header-height", `${header.offsetHeight}px`);
+    }
     const scrollable = document.documentElement.scrollHeight - window.innerHeight;
     const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
     const runnerSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--runner-size")) || 64;
