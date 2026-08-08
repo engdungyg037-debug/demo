@@ -4,6 +4,32 @@ const qrOpenButtons = document.querySelectorAll("[data-qr-open]");
 const qrCloseButtons = document.querySelectorAll("[data-qr-close]");
 const toast = document.querySelector(".copy-toast");
 
+/* Pony scroll progress */
+(function initPonyScrollProgress() {
+  let ticking = false;
+
+  const updateProgress = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+    const runnerSize = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--runner-size")) || 64;
+    const travel = Math.max(0, window.innerWidth - runnerSize - 12);
+    document.documentElement.style.setProperty("--scroll-progress", progress.toFixed(4));
+    document.documentElement.style.setProperty("--scroll-x", `${(travel * progress).toFixed(2)}px`);
+    ticking = false;
+  };
+
+  const requestUpdate = () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateProgress);
+      ticking = true;
+    }
+  };
+
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+  updateProgress();
+})();
+
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
